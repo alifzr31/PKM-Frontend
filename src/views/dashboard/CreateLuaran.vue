@@ -1,0 +1,247 @@
+<template>
+    <div>
+        <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+        <symbol id="check" viewBox="0 0 16 16">
+            <title>Check</title>
+            <path d="M13.854 3.646a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L6.5 10.293l6.646-6.647a.5.5 0 0 1 .708 0z"/>
+        </symbol>
+        </svg>
+
+        <div class="container py-3">
+            <header>
+                <div class="d-flex flex-column flex-md-row align-items-center pb-3 mb-4 border-bottom">
+                    <a href="/" class="d-flex align-items-center text-dark text-decoration-none">
+                        <img src="../auth/img/poltek.png" alt="" style="width: 10%;" class="me-2" viewBox="0 0 118 94" role="img"><title>Bootstrap</title><path fill-rule="evenodd" clip-rule="evenodd" d="M24.509 0c-6.733 0-11.715 5.893-11.492 12.284.214 6.14-.064 14.092-2.066 20.577C8.943 39.365 5.547 43.485 0 44.014v5.972c5.547.529 8.943 4.649 10.951 11.153 2.002 6.485 2.28 14.437 2.066 20.577C12.794 88.106 17.776 94 24.51 94H93.5c6.733 0 11.714-5.893 11.491-12.284-.214-6.14.064-14.092 2.066-20.577 2.009-6.504 5.396-10.624 10.943-11.153v-5.972c-5.547-.529-8.934-4.649-10.943-11.153-2.002-6.484-2.28-14.437-2.066-20.577C105.214 5.894 100.233 0 93.5 0H24.508zM80 57.863C80 66.663 73.436 72 62.543 72H44a2 2 0 01-2-2V24a2 2 0 012-2h18.437c9.083 0 15.044 4.92 15.044 12.474 0 5.302-4.01 10.049-9.119 10.88v.277C75.317 46.394 80 51.21 80 57.863zM60.521 28.34H49.948v14.934h8.905c6.884 0 10.68-2.772 10.68-7.727 0-4.643-3.264-7.207-9.012-7.207zM49.948 49.2v16.458H60.91c7.167 0 10.964-2.876 10.964-8.281 0-5.406-3.903-8.178-11.425-8.178H49.948z" fill="currentColor"></path>
+                        <span class="fs-4">Politeknik TEDC Bandung</span>
+                    </a>
+
+                    <nav class="d-inline-flex mt-2 mt-md-0 ms-md-auto">
+                        <router-link :to="{ name: 'dashboard'}" class="me-3 py-2 text-dark text-decoration-none">Proposal</router-link>
+                        <a class="nav-link dropdown-toggle me-3 py-2 text-dark text-decoration-none" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        Laporan
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            <li><router-link :to="{ name: 'lapkem.index'}" class="dropdown-item">Laporan Kemajuan</router-link></li>
+                            <li><router-link :to="{ name: 'lapakhir.index'}" class="dropdown-item">Laporan Akhir</router-link></li>
+                            <!-- <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="#">Something else here</a></li> -->
+                        </ul>
+                        <router-link :to="{ name: 'luaran.index'}" class="me-3 py-2 text-dark text-decoration-none"><b style="color: #0d6efd;">Luaran</b></router-link>
+                    </nav>
+
+                    <form class="col-12 col-lg-auto mb-3 mb-lg-0 me-lg-3">
+                    </form>
+
+                    <div class="dropdown text-end">
+                        <a href="#" class="d-block link-dark text-decoration-none dropdown-toggle" id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">
+                            <img src="./img/user.svg" alt="mdo" width="32" height="32" class="rounded-circle">
+                        </a>
+                        <ul class="dropdown-menu text-small" aria-labelledby="dropdownUser1">
+                            <li><a class="dropdown-item">{{ user.name }}</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="#">Profile</a></li>
+                            <li><a class="dropdown-item" @click.prevent="logout" style="cursor: pointer;">Sign out</a></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <article class="my-3" id="breadcrumb">
+                <div>
+                    <div class="bd-example">
+                    <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><router-link :to="{ name: 'luaran.index' }" class="text-decoration-none">Luaran</router-link></li>
+                        <li class="breadcrumb-item active" aria-current="page">Upload Luaran</li>
+                    </ol>
+                    </nav>
+                    </div>
+                </div>
+                </article>
+                
+                <div class="pricing-header p-3 pb-md-4 mx-auto text-center">
+                    <h1 class="display-4 fw-normal">Upload Luaran</h1>
+                </div>
+            </header>
+
+            <main>
+                <div class="row g-5">
+                <div class="col-md-7 col-lg-12">
+                    <form @submit.prevent="store" enctype="multipart/form-data">
+                    <div class="row g-3">
+                        
+                        <input type="text" v-model="luarans.nip" readonly hidden>
+
+                        <div class="col-6">
+                            <label for="email" class="form-label">Judul</label>
+                            <select v-model="luarans.judul" class="form-control">
+                                <option value="" selected hidden disabled>Pilih Judul Proposal</option>
+                                <option :value="prop.judul" v-for="(prop, index) in proposals" :key="index">{{ prop.judul }}</option>
+                            </select>
+                            <div v-if="validation.judul" class="mt-2 alert alert-danger">
+                                {{ validation.judul[0] }}
+                            </div>
+                        </div>
+
+                        <div class="col-6">
+                            <label for="address2" class="form-label">File Luaran <i><span style="color: red;">*.pdf | Max 10 Mb</span></i></label>
+                            <input type="file" class="form-control" @change="selectLuaran">
+                            <div v-if="validation.fl_luaran" class="mt-2 alert alert-danger">
+                                {{ validation.fl_luaran[0] }}
+                            </div>
+                        </div>
+
+                        <div class="col-6">
+                            <label for="email" class="form-label">Link Publikasi</label>
+                            <input type="text" v-model="luarans.publikasi" class="form-control" placeholder="Link Publikasi">
+                            <div v-if="validation.publikasi" class="mt-2 alert alert-danger">
+                                {{ validation.publikasi[0] }}
+                            </div>
+                        </div>
+
+                        <div class="col-6">
+                            <label for="email" class="form-label">Link Artikel</label>
+                            <input type="text" v-model="luarans.artikel" class="form-control" placeholder="Link Artikel">
+                            <div v-if="validation.artikel" class="mt-2 alert alert-danger">
+                                {{ validation.artikel[0] }}
+                            </div>
+                        </div>
+
+
+                    </div>
+
+                    <hr class="my-4">
+
+                    <button class="w-100 btn btn-primary btn-lg" type="submit">Input Luaran</button>
+                    </form>
+                </div>
+                </div>
+            </main>
+
+            <footer class="pt-4 my-md-5 pt-md-5 border-top">
+                <div class="row">
+                <div class="col-12 col-md">
+                    <!-- <img class="mb-2" src="../auth/img/poltek.png" alt="" style="width: 50%"> -->
+                    <p class="d-block mb-3 text-muted">Politeknik TEDC Bandung</p>
+                    <!-- <small class="d-block mb-3 text-muted">Politeknik TEDC Bandung</small> -->
+                </div>
+                <div class="col-6 col-md">
+                </div>
+                <div class="col-6 col-md">
+                </div>
+                <div class="col-6 col-md">
+                    <ul class="list-unstyled text-small">
+                    <li class="mb-1"><a class="link-secondary text-decoration-none" href="#">Pengelola : UPPM</a></li>
+                    <!-- <li class="mb-1"><a class="link-secondary text-decoration-none" href="#">Politeknik TEDC Bandung 2022</a></li> -->
+                    </ul>
+                </div>
+                </div>
+            </footer>
+        </div>
+    </div>
+</template>
+
+<script>
+import { reactive, ref, onMounted } from "vue";
+import { useRouter } from "vue-router";
+import axios from 'axios';
+
+export default {
+    setup() {
+        const token = localStorage.getItem('token')
+        const user = ref('')
+        const proposals = ref([])
+        const luarans = reactive({
+            judul: '',
+            publikasi: '',
+            fl_luaran: '',
+            artikel: '',
+            nip: ''
+        })
+
+        const validation = ref([])
+        const router = useRouter()
+        // const proposals = ref([])
+
+        onMounted(() => {
+            if (!token) {
+                return router.push({
+                    name: 'login'
+                })
+            }
+
+            axios.defaults.headers.common.Authorization = `Bearer ${token}`
+            axios.get('http://localhost:8000/api/user')
+            .then(response => {
+                user.value = response.data
+            }).catch(error => {
+                console.log(error.response.data)
+            })
+            
+            const akun = JSON.parse(localStorage.getItem('data'));
+            luarans.nip = akun.nip
+
+            axios.get(`http://localhost:8000/api/diterima/${akun.nip}`)
+            .then(response => {
+                // console.log(response.data);
+                proposals.value = response.data.data
+            })
+        })
+
+        function selectLuaran(event) {
+            let selectedFile = event.target.files[0]
+
+            luarans.fl_luaran = selectedFile
+            console.log(luarans.fl_luaran)
+        }
+
+        function store() {
+            let formData = new FormData()
+            formData.append('judul', luarans.judul)
+            formData.append('publikasi', luarans.publikasi)
+            formData.append('fl_luaran', luarans.fl_luaran)
+            formData.append('artikel', luarans.artikel)
+            formData.append('status', 'Sedang diproses')
+            formData.append('nip', luarans.nip)
+
+            axios.post('http://localhost:8000/api/luarans', formData)
+            .then(response => {
+                console.log(response.data.data)
+                router.push({
+                    name: 'luaran.index'
+                })
+            }).catch((error) => {
+                validation.value = error.response.data
+            })
+        }
+
+        function logout() {
+            axios.defaults.headers.common.Authorization = `Bearer ${token}`
+            axios.post('http://localhost:8000/api/logout')
+            .then(response => {
+                if (response.data.success) {
+                    localStorage.removeItem('token')
+                    localStorage.removeItem('data')
+
+                    return router.push({
+                        name: 'login'
+                    })
+                }
+            }).catch(error => {
+                console.log(error.response.data)
+            })
+        }
+
+        return {
+            token,
+            user,
+            luarans,
+            proposals,
+            validation,
+            router,
+            selectLuaran,
+            store,
+            logout
+        }
+    }
+}
+</script>
